@@ -2,9 +2,10 @@
 session_start();
 require("modelo/m_venta.php");
 
-$id_usuario = $_SESSION['id_usuario'];
+$id_usuario = $_SESSION['id_usuario'] ?? 0;
 
-$res = CerrarCaja($id_usuario);
+$resultado = CerrarCaja($id_usuario);
 
-echo $res;
+// Mostrar respuesta para ver qué devuelve exactamente
+echo $resultado;
 ?>

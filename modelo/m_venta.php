@@ -42,34 +42,42 @@ function CerrarCaja($id_usuario)
 {
     require("conexion.php");
 
-    // Obtener total de ventas del día actual
+    // ✅ Paso 1: calcular total
     $sql_total = "SELECT SUM(precio_venta * cantidad) AS total 
                   FROM venta 
                   WHERE DATE(fecha_venta) = CURDATE()";
     $res_total = mysqli_query($con, $sql_total);
+
+    if (!$res_total) {
+        return "Error al calcular total: " . mysqli_error($con);
+    }
+
     $data = mysqli_fetch_assoc($res_total);
     $total = $data['total'] ?? 0;
 
-    // Verificar si ya se cerró la caja hoy
+    // ✅ Paso 2: verificar si ya se cerró la caja
     $sql_check = "SELECT * FROM cierre_caja WHERE fecha_cierre = CURDATE()";
     $res_check = mysqli_query($con, $sql_check);
+
+    if (!$res_check) {
+        return "Error al verificar cierre: " . mysqli_error($con);
+    }
 
     if (mysqli_num_rows($res_check) > 0) {
         return "YA_CERRADO";
     }
 
-    // Insertar registro del cierre
+    // ✅ Paso 3: insertar el cierre
     $sql_insert = "INSERT INTO cierre_caja (fecha_cierre, total_ventas, id_usuario)
                    VALUES (CURDATE(), '$total', '$id_usuario')";
     $res_insert = mysqli_query($con, $sql_insert);
 
-    if ($res_insert) {
-        return "OK";
-    } else {
-        return "ERROR";
+    if (!$res_insert) {
+        return "Error al insertar cierre: " . mysqli_error($con);
     }
 
-    mysqli_close($con);
+    return "OK";
 }
+
 
 ?>
