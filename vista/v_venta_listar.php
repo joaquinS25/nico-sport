@@ -1,5 +1,11 @@
 <div class="container-fluid px-4">
     <h1 class="mt-4">Lista de Ventas</h1>
+    <div class="d-flex justify-content-end mb-3">
+        <button id="btnCerrarCaja" class="btn btn-danger">
+            <i class="fas fa-lock"></i> Cerrar Caja
+        </button>
+    </div>
+
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
@@ -72,3 +78,33 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById('btnCerrarCaja').addEventListener('click', function() {
+    Swal.fire({
+        title: '¿Cerrar caja?',
+        text: "Esto registrará el total de ventas del día.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, cerrar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('venta_cerrar.php')
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'OK') {
+                    Swal.fire('Caja cerrada', 'El total de ventas se registró correctamente.', 'success');
+                } else if (data === 'YA_CERRADO') {
+                    Swal.fire('Ya cerrada', 'La caja de hoy ya fue cerrada.', 'info');
+                } else {
+                    Swal.fire('Error', 'Hubo un problema al cerrar la caja.', 'error');
+                }
+            })
+            .catch(err => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));
+        }
+    });
+});
+</script>
