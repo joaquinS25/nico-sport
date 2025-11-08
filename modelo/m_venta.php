@@ -37,7 +37,25 @@ function RegistrarVenta($cantidad, $nom_producto, $precio_venta, $id_medio_pago,
 
 	mysqli_close($con);
 }
+ function ListarCierreCaja()
+ {
+require("conexion.php");
 
+	$sql="SELECT * FROM cierre_caja cc
+	INNER JOIN usuario u ON cc.id_usuario = u.id_usuario";
+	$res = mysqli_query($con,$sql);
+
+	$datos = array();
+
+	while ($fila = mysqli_fetch_array($res,MYSQLI_ASSOC)) 
+	{
+		$datos[] = $fila;
+	}
+
+	return $datos;
+
+	mysqli_close($con);
+ }
 function CerrarCaja($id_usuario, $fecha = null)
 {
     require("conexion.php");

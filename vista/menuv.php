@@ -35,6 +35,7 @@ if (!isset($_SESSION['autentificado']) || !$_SESSION['autentificado']) {
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="venta_listar.php">Listado</a>
                         <a class="nav-link" href="venta_registrar.php">Nuevo</a>
+                        <a class="nav-link" href="cierre_caja_listar.php">Cierre Caja</a>
                     </nav>
                 </div>
 
