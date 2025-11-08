@@ -1,6 +1,10 @@
 <div class="container-fluid px-4">
     <h1 class="mt-4">Lista de Ventas</h1>
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
+        <!-- Selector de fecha -->
+        <input type="date" id="fechaCierre" class="form-control w-auto" value="<?php echo date('Y-m-d'); ?>">
+
+        <!-- Botón cerrar caja -->
         <button id="btnCerrarCaja" class="btn btn-danger">
             <i class="fas fa-lock"></i> Cerrar Caja
         </button>
@@ -23,7 +27,6 @@
                         <th>Precio</th>
                         <th>Medio de Pago</th>
                         <th>Usuario</th>
-                        
                     </tr>
                 </thead>
                 <tfoot>
@@ -36,43 +39,25 @@
                         <th>Precio</th>
                         <th>Medio de Pago</th>
                         <th>Usuario</th>
-                        
                     </tr>
                 </tfoot>
                 <tbody>
                     <?php 
                         $n=0;
-                        foreach ($ventas as $key => $value) 
-                        {
+                        foreach ($ventas as $value) {
                             $n++;
-                            $id_venta = $value['id_venta'];
-                            $fecha_venta = $value['fecha_venta'];
-                            $cantidad = $value['cantidad'];
-                            $nom_producto = $value['nom_producto'];
-                            $precio_venta = $value['precio_venta'];
-                            $medio_pago = $value['nom_medio_pago'];
-                            $nom_usuario = $value['nom_usuario'];
-                            $ape_usuario = $value['ape_usuario'];
                             ?>
                             <tr>
                                 <td><?php echo $n; ?></td>
-                                <td><?php echo $id_venta; ?></td>
-                                <td><?php echo $fecha_venta; ?></td>
-                                <td><?php echo $cantidad; ?></td>
-                                <td><?php echo $nom_producto; ?></td>
-                                <td><?php echo $precio_venta; ?></td>
-                                <td><?php echo $medio_pago; ?></td>
-                                <td><?php echo $nom_usuario." ".$ape_usuario; ?></td>
-                                
-                    
+                                <td><?php echo $value['id_venta']; ?></td>
+                                <td><?php echo $value['fecha_venta']; ?></td>
+                                <td><?php echo $value['cantidad']; ?></td>
+                                <td><?php echo $value['nom_producto']; ?></td>
+                                <td><?php echo $value['precio_venta']; ?></td>
+                                <td><?php echo $value['nom_medio_pago']; ?></td>
+                                <td><?php echo $value['nom_usuario']." ".$value['ape_usuario']; ?></td>
                             </tr>
-                            
-
-
-                        <?php 
-                        }
-                        ?>
-
+                        <?php } ?>
                 </tbody>
             </table>
         </div>
@@ -82,9 +67,11 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.getElementById('btnCerrarCaja').addEventListener('click', function() {
+    const fechaSeleccionada = document.getElementById('fechaCierre').value;
+
     Swal.fire({
         title: '¿Cerrar caja?',
-        text: "Esto registrará el total de ventas del día.",
+        text: "Esto registrará el total de ventas del día seleccionado (" + fechaSeleccionada + ").",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -92,15 +79,19 @@ document.getElementById('btnCerrarCaja').addEventListener('click', function() {
         confirmButtonText: 'Sí, cerrar'
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch('venta_cerrar.php')
+            fetch('venta_cerrar.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'fecha=' + encodeURIComponent(fechaSeleccionada)
+            })
             .then(response => response.text())
             .then(data => {
                 if (data === 'OK') {
                     Swal.fire('Caja cerrada', 'El total de ventas se registró correctamente.', 'success');
                 } else if (data === 'YA_CERRADO') {
-                    Swal.fire('Ya cerrada', 'La caja de hoy ya fue cerrada.', 'info');
+                    Swal.fire('Ya cerrada', 'La caja de esa fecha ya fue cerrada.', 'info');
                 } else {
-                    Swal.fire('Error', 'Hubo un problema al cerrar la caja.', 'error');
+                    Swal.fire('Error', data, 'error');
                 }
             })
             .catch(err => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'));

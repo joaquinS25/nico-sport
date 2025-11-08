@@ -2,10 +2,8 @@
 session_start();
 require("modelo/m_venta.php");
 
-$id_usuario = $_SESSION['id_usuario'] ?? 0;
+$id_usuario = $_SESSION['id_session'] ?? 0;
+$fecha = $_POST['fecha'] ?? date('Y-m-d');
 
-$resultado = CerrarCaja($id_usuario);
-
-// Mostrar respuesta para ver qué devuelve exactamente
-echo $resultado;
+echo CerrarCaja($id_usuario, $fecha);
 ?>
