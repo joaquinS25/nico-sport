@@ -36,6 +36,7 @@ if (!isset($_SESSION['autentificado']) || !$_SESSION['autentificado']) {
                         <a class="nav-link" href="venta_listar.php">Listado</a>
                         <a class="nav-link" href="venta_registrar.php">Nuevo</a>
                         <a class="nav-link" href="cierre_caja_listar.php">Cierre Caja</a>
+                        <a class="nav-link" href="diezmo_listar.php">Diezmo</a>
                     </nav>
                 </div>
 

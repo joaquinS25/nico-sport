@@ -71,7 +71,24 @@ function CalcularDiezmo($fecha_inicio, $fecha_fin)
 
     mysqli_close($con);
 }
+function ListarDiezmo()
+{
+    require("conexion.php");
 
+	$sql="SELECT * FROM diezmo";
+	$res = mysqli_query($con,$sql);
+
+	$datos = array();
+
+	while ($fila = mysqli_fetch_array($res,MYSQLI_ASSOC)) 
+	{
+		$datos[] = $fila;
+	}
+
+	return $datos;
+
+	mysqli_close($con);
+}
 function ListarCierreCaja()
 {
 require("conexion.php");
