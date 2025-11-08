@@ -37,8 +37,43 @@ function RegistrarVenta($cantidad, $nom_producto, $precio_venta, $id_medio_pago,
 
 	mysqli_close($con);
 }
- function ListarCierreCaja()
- {
+function CalcularDiezmo($fecha_inicio, $fecha_fin)
+{
+    require("conexion.php");
+
+    // 1️⃣ Sumar todas las ventas de los cierres entre las fechas indicadas
+    $sql_total = "SELECT SUM(total_ventas) AS total 
+                  FROM cierre_caja 
+                  WHERE fecha_cierre BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+    $res_total = mysqli_query($con, $sql_total);
+
+    if (!$res_total) {
+        return "Error al calcular total: " . mysqli_error($con);
+    }
+
+    $data = mysqli_fetch_assoc($res_total);
+    $total = $data['total'] ?? 0;
+
+    // 2️⃣ Calcular el diezmo
+    $intermedio = $total * 0.15;
+    $diezmo = $intermedio * 0.10;
+
+    // 3️⃣ Insertar el resultado en la tabla diezmo
+    $sql_insert = "INSERT INTO diezmo (fecha_inicio, fecha_fin, monto_diezmo)
+                   VALUES ('$fecha_inicio', '$fecha_fin', '$diezmo')";
+    $res_insert = mysqli_query($con, $sql_insert);
+
+    if ($res_insert) {
+        return "OK";
+    } else {
+        return "Error al registrar diezmo: " . mysqli_error($con);
+    }
+
+    mysqli_close($con);
+}
+
+function ListarCierreCaja()
+{
 require("conexion.php");
 
 	$sql="SELECT * FROM cierre_caja cc
@@ -55,7 +90,7 @@ require("conexion.php");
 	return $datos;
 
 	mysqli_close($con);
- }
+}
 function CerrarCaja($id_usuario, $fecha = null)
 {
     require("conexion.php");
