@@ -52,3 +52,47 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById('btnCerrarCaja').addEventListener('click', function() {
+    const fecha = document.getElementById('fechaCierre').value;
+
+    if (!fecha) {
+        Swal.fire('Error', 'Por favor selecciona una fecha antes de cerrar la caja.', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: '¿Cerrar caja?',
+        text: `Esto registrará el total de ventas del día ${fecha}.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, cerrar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('venta_cerrar.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'fecha=' + encodeURIComponent(fecha)
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'OK') {
+                    Swal.fire('Caja cerrada', 'El total de ventas se registró correctamente.', 'success');
+                } else if (data === 'YA_CERRADO') {
+                    Swal.fire('Ya cerrada', `La caja del ${fecha} ya fue cerrada.`, 'info');
+                } else {
+                    Swal.fire('Error', 'Hubo un problema al cerrar la caja.', 'error');
+                    console.error(data);
+                }
+            })
+            .catch(err => {
+                Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+                console.error(err);
+            });
+        }
+    });
+});
+</script>
