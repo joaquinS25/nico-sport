@@ -2,30 +2,46 @@
 function ListarVentas()
 {
 	require("conexion.php");
-
 	$sql="SELECT * FROM venta v
 	INNER JOIN usuario u ON v.id_usuario = u.id_usuario
 	INNER JOIN medios_pago mp ON v.id_medio_pago = mp.id_medio_pago";
 	$res = mysqli_query($con,$sql);
-
 	$datos = array();
-
-	while ($fila = mysqli_fetch_array($res,MYSQLI_ASSOC)) 
-	{
+	while ($fila = mysqli_fetch_array($res,MYSQLI_ASSOC)) {
 		$datos[] = $fila;
 	}
-
 	return $datos;
-
 	mysqli_close($con);
 }
+
 function RegistrarVenta($cantidad, $nom_producto, $precio_venta, $id_medio_pago, $id_usuario) 
 {
-   require("conexion.php");
+    require("conexion.php");
 
-    // Registrar venta con fecha actual y usuario logeado
-	$sql = "INSERT INTO venta (cantidad, nom_producto, precio_venta, id_medio_pago, id_usuario, fecha_venta)
-            VALUES ('$cantidad', '$nom_producto', '$precio_venta', '$id_medio_pago', '$id_usuario', NOW())";
+    // Buscar el nombre del medio de pago
+    $sql_medio = "SELECT nom_medio_pago FROM medios_pago WHERE id_medio_pago = '$id_medio_pago'";
+    $res_medio = mysqli_query($con, $sql_medio);
+    $row = mysqli_fetch_assoc($res_medio);
+    $nombre_medio = strtolower($row['nom_medio_pago']);
+
+    // Inicializar montos
+    $precio_efectivo = 0;
+    $precio_yape = 0;
+
+    if ($nombre_medio == 'mixto') {
+        $precio_efectivo = $_POST['precio_efectivo'] ?? 0;
+        $precio_yape = $_POST['precio_yape'] ?? 0;
+        $precio_venta = $precio_efectivo + $precio_yape;
+    } else {
+        if ($nombre_medio == 'efectivo') {
+            $precio_efectivo = $precio_venta;
+        } elseif ($nombre_medio == 'yape') {
+            $precio_yape = $precio_venta;
+        }
+    }
+
+    $sql = "INSERT INTO venta (cantidad, nom_producto, precio_venta, precio_efectivo, precio_yape, id_medio_pago, id_usuario, fecha_venta)
+            VALUES ('$cantidad', '$nom_producto', '$precio_venta', '$precio_efectivo', '$precio_yape', '$id_medio_pago', '$id_usuario', NOW())";
             
 	$res = mysqli_query($con, $sql);
 
@@ -37,6 +53,7 @@ function RegistrarVenta($cantidad, $nom_producto, $precio_venta, $id_medio_pago,
 
 	mysqli_close($con);
 }
+
 function CalcularDiezmo($fecha_inicio, $fecha_fin)
 {
     require("conexion.php");
