@@ -49,3 +49,49 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById('btnCerrarCaja').addEventListener('click', function() {
+    const fecha = document.getElementById('fechaCierre').value;
+
+    if (!fecha) {
+        Swal.fire('Error', 'Selecciona una fecha de cierre', 'error');
+        return;
+    }
+
+    Swal.fire({
+        title: '¿Cerrar caja?',
+        text: 'Se calcularán los montos de Yape, Efectivo y Total del día ' + fecha,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cerrar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('cerrar_caja.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'fecha=' + fecha
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Caja cerrada',
+                        html: `
+                            <b>Fecha:</b> ${data.fecha}<br>
+                            <b>Total ventas:</b> S/ ${data.total_yape}<br>
+                            <b>Total Efectivo:</b> S/ ${data.total_efectivo}<br>
+                            <b>Total Ventas:</b> S/ ${data.total_ventas}
+                        `,
+                        icon: 'success'
+                    });
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            })
+            .catch(err => Swal.fire('Error', 'Hubo un problema con el servidor', 'error'));
+        }
+    });
+});
+</script>
