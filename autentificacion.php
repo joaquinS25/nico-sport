@@ -8,8 +8,7 @@ require("modelo/m_usuario.php");
 
 $usuario = ValidarUsuario($user,$pass);
 
-//Si exite este usuario
-if($usuario!=NULL)
+if($usuario != NULL)
 {
     foreach ($usuario as $key => $value) 
     {
@@ -21,15 +20,16 @@ if($usuario!=NULL)
         $pass_usuario = $value['pass_usuario'];
     }
 
-    //Crear variables de session
     $_SESSION['autentificado'] = TRUE;
     $_SESSION['id_session'] = $id_usuario;
-    $_SESSION['nom_session'] = $nom_usuario." ".$ape_usuario;
+    $_SESSION['nom_session'] = $nom_usuario . " " . $ape_usuario;
 
     header('location: venta_listar.php');
+    exit();
 }
 else
 {
-    header('location: index.php');
+    header('location: index.php?error=1');
+    exit();
 }
 ?>
