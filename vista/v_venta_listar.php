@@ -55,42 +55,40 @@ document.getElementById('btnCerrarCaja').addEventListener('click', function() {
     const fecha = document.getElementById('fechaCierre').value;
 
     if (!fecha) {
-        Swal.fire('Error', 'Selecciona una fecha de cierre', 'error');
+        Swal.fire('Error', 'Por favor selecciona una fecha antes de cerrar la caja.', 'warning');
         return;
     }
 
     Swal.fire({
         title: '¿Cerrar caja?',
-        text: 'Se calcularán los montos de Yape, Efectivo y Total del día ' + fecha,
+        text: `Esto registrará el total de ventas del día ${fecha}.`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Sí, cerrar',
-        cancelButtonText: 'Cancelar'
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, cerrar'
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch('cerrar_caja.php', {
+            fetch('venta_cerrar.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'fecha=' + fecha
+                body: 'fecha=' + encodeURIComponent(fecha)
             })
-            .then(response => response.json())
+            .then(response => response.text())
             .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Caja cerrada',
-                        html: `
-                            <b>Fecha:</b> ${data.fecha}<br>
-                            <b>Total ventas:</b> S/ ${data.total_yape}<br>
-                            <b>Total Efectivo:</b> S/ ${data.total_efectivo}<br>
-                            <b>Total Ventas:</b> S/ ${data.total_ventas}
-                        `,
-                        icon: 'success'
-                    });
+                if (data === 'OK') {
+                    Swal.fire('Caja cerrada', 'El total de ventas se registró correctamente.', 'success');
+                } else if (data === 'YA_CERRADO') {
+                    Swal.fire('Ya cerrada', `La caja del ${fecha} ya fue cerrada.`, 'info');
                 } else {
-                    Swal.fire('Error', data.message, 'error');
+                    Swal.fire('Error', 'Hubo un problema al cerrar la caja.', 'error');
+                    console.error(data);
                 }
             })
-            .catch(err => Swal.fire('Error', 'Hubo un problema con el servidor', 'error'));
+            .catch(err => {
+                Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+                console.error(err);
+            });
         }
     });
 });
