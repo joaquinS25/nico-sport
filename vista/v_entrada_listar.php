@@ -5,6 +5,12 @@
             <i class="fas fa-table me-1"></i>
                 Entrada de Mercaderia
         </div>
+        <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-success" id="btnPagarDeuda">
+                💰 Pagar Deuda
+            </button>
+        </div>
+
         <div class="card-body">
             <table id="datatablesSimple">
                 <thead>
@@ -49,14 +55,65 @@
                                 <td><?php echo $fecha_registro; ?></td>
                             </tr>
                             
-
-
+                           
                         <?php 
                         }
                         ?>
 
                 </tbody>
+                 
+
             </table>
+            <tfoot>
+                    <h3 class="text-end mt-3">
+                        Deuda Total: 
+                        <b style="color:red;">S/ 
+                            <?php require_once("modelo/m_mercaderia_entrada.php"); echo ObtenerDeudaTotal(); ?>
+                        </b>
+                        </h3>
+                </tfoot>
+           
+
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.getElementById("btnPagarDeuda").addEventListener("click", function() {
+
+    Swal.fire({
+        title: "Registrar Pago",
+        html: `
+            <p>Monto a pagar:</p>
+            <input id="montoPago" type="number" class="swal2-input" min="0.10" step="0.10">
+        `,
+        showCancelButton: true,
+        confirmButtonText: "Pagar"
+    }).then(result => {
+
+        if (result.isConfirmed) {
+
+            let monto = parseFloat(document.getElementById("montoPago").value);
+
+            if (!monto || monto <= 0) {
+                Swal.fire("Error", "Ingresa un monto válido", "error");
+                return;
+            }
+
+            fetch("registrar_pago_entrada_total.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "monto=" + monto
+            })
+            .then(r => r.text())
+            .then(resp => {
+                Swal.fire("Pago registrado", "La deuda se ha actualizado", "success")
+                    .then(() => location.reload());
+            });
+        }
+
+    });
+});
+</script>

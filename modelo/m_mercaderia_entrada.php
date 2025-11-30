@@ -35,4 +35,23 @@ function RegistrarEntrada($cantidad,$producto,$precio,$proveedor,$fecha_registro
 
 	mysqli_close($con);
 }
+function ObtenerDeudaTotal()
+{
+    require("conexion.php");
+
+    $sql = "SELECT SUM(precio) AS total FROM entrada_mercaderia";
+    $res = mysqli_query($con, $sql);
+    $data = mysqli_fetch_assoc($res);
+
+    // Obtener pagos realizados
+    $sql2 = "SELECT SUM(monto_pagado) AS pagado FROM pagos_entrada_total";
+    $res2 = mysqli_query($con, $sql2);
+    $data2 = mysqli_fetch_assoc($res2);
+
+    $total = $data['total'] ?? 0;
+    $pagado = $data2['pagado'] ?? 0;
+
+    return $total - $pagado;
+}
+
 ?>

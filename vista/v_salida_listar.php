@@ -33,31 +33,35 @@
                         foreach ($salida as $key => $value) 
                         {
                             $n++;
-                            $id_salida = $value['id_salida'];
-                            $nombre = $value['nombre'];
-                            $cantidad = $value['cantidad'];
-                            $producto = $value['producto'];
-                            $precio = $value['precio'];
-                            $fecha_registro = $value['fecha_registro'];
-                            
                             ?>
                             <tr>
-                                <td><?php echo $n; ?></td>
-                                <td><?php echo $nombre; ?></td>
-                                <td><?php echo $cantidad; ?></td>
-                                <td><?php echo $producto; ?></td>
-                                <td><?php echo $precio; ?></td>
-                                <td><?php echo $fecha_registro; ?></td>
+                                <td><?= $n ?></td>
+                                <td><?= $value['nombre'] ?></td>
+                                <td><?= $value['cantidad'] ?></td>
+                                <td><?= $value['producto'] ?></td>
+                                <td><?= $value['precio'] ?></td>
+                                <td><?= $value['fecha_registro'] ?></td>
                             </tr>
-                            
-
-
                         <?php 
                         }
-                        ?>
-
+                    ?>
                 </tbody>
             </table>
+
+            <!-- 🔹 TOTAL DE SALIDA DE MERCADERÍA -->
+            <h3 class="text-end mt-3">
+                Total: 
+                <b style="color:blue;">S/
+                    <?php  
+                        $total_salida = 0;
+                        foreach ($salida as $item) {
+                            $total_salida += floatval($item['precio']);
+                        }
+                        echo number_format($total_salida, 2);
+                    ?>
+                </b>
+            </h3>
+
         </div>
     </div>
 </div>
