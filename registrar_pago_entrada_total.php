@@ -2,6 +2,7 @@
 require("modelo/conexion.php"); // SOLO ESTA conexión
 
 if (!isset($_POST["monto"])) {
+
     echo "ERROR_MONTO";
     exit;
 }
