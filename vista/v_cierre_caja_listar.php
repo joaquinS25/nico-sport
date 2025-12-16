@@ -14,7 +14,7 @@
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
-                Cierre de Caa
+                Cierre de Caja
         </div>
         <div class="card-body">
             <table id="datatablesSimple">
@@ -24,6 +24,9 @@
                         <th>ID</th>
                         <th>Fecha Cierre</th>
                         <th>Total Ventas</th>
+                        <th>Total Yape</th>
+                        <th>Total Efectivo</th>
+                        
                         <th>Usuario</th>
                     </tr>
                 </thead>
@@ -33,6 +36,8 @@
                         <th>ID</th>
                         <th>Fecha Cierre</th>
                         <th>Total Ventas</th>
+                        <th>Total Yape</th>
+                        <th>Total Efectivo</th>
                         <th>Usuario</th>
                     </tr>
                 </tfoot>
@@ -47,7 +52,11 @@
                                 <td><?php echo $value['id_cierre']; ?></td>
                                 <td><?php echo $value['fecha_cierre']; ?></td>
                                 <td><?php echo $value['total_ventas']; ?></td>
+                                <td><?= number_format($value['total_yape'], 2) ?></td>
+                                <td><?= number_format($value['total_efectivo'], 2) ?></td>
                                 <td><?php echo $value['nom_usuario']." ".$value['ape_usuario']; ?></td>
+                                
+
                             </tr>
                         <?php } ?>
                 </tbody>

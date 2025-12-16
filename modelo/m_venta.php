@@ -129,35 +129,61 @@ function CerrarCaja($id_usuario, $fecha = null)
 {
     require("conexion.php");
 
-    // Si no se envía fecha, usar la fecha actual
     if ($fecha === null) {
         $fecha = date('Y-m-d');
     }
 
-    // Paso 1: Calcular total del día indicado
-    $sql_total = "SELECT SUM(precio_venta) AS total 
-                  FROM venta 
-                  WHERE DATE(fecha_venta) = '$fecha'";
-    $res_total = mysqli_query($con, $sql_total);
+    // ✅ Paso 1: Calcular totales (ventas, yape, efectivo)
+    $sql_total = "SELECT
+        SUM(v.precio_venta) AS total_ventas,
 
+        SUM(
+            CASE
+                WHEN mp.nom_medio_pago = 'Yape' THEN v.precio_venta
+                WHEN mp.nom_medio_pago = 'Mixto' THEN v.precio_yape
+                ELSE 0
+            END
+        ) AS total_yape,
+
+        SUM(
+            CASE
+                WHEN mp.nom_medio_pago = 'Efectivo' THEN v.precio_venta
+                WHEN mp.nom_medio_pago = 'Mixto' THEN v.precio_efectivo
+                ELSE 0
+            END
+        ) AS total_efectivo
+
+    FROM venta v
+    INNER JOIN medios_pago mp ON v.id_medio_pago = mp.id_medio_pago
+    WHERE DATE(v.fecha_venta) = '$fecha'";
+
+    $res_total = mysqli_query($con, $sql_total);
     if (!$res_total) {
         return "Error al calcular total: " . mysqli_error($con);
     }
 
     $data = mysqli_fetch_assoc($res_total);
-    $total = $data['total'] ?? 0;
 
-    // Paso 2: Verificar si ya se cerró esa fecha
-    $sql_check = "SELECT * FROM cierre_caja WHERE fecha_cierre = '$fecha'";
+    $total_ventas   = $data['total_ventas'] ?? 0;
+    $total_yape     = $data['total_yape'] ?? 0;
+    $total_efectivo = $data['total_efectivo'] ?? 0;
+
+    // ✅ Paso 2: Verificar si ya se cerró esa fecha
+    $sql_check = "SELECT 1 FROM cierre_caja WHERE fecha_cierre = '$fecha' LIMIT 1";
     $res_check = mysqli_query($con, $sql_check);
+
+    if (!$res_check) {
+        return "Error al verificar cierre: " . mysqli_error($con);
+    }
 
     if (mysqli_num_rows($res_check) > 0) {
         return "YA_CERRADO";
     }
 
-    // Paso 3: Insertar cierre
-    $sql_insert = "INSERT INTO cierre_caja (fecha_cierre, total_ventas, id_usuario)
-                   VALUES ('$fecha', '$total', '$id_usuario')";
+    // ✅ Paso 3: Insertar cierre (con Yape/Efectivo)
+    $sql_insert = "INSERT INTO cierre_caja (fecha_cierre, total_ventas, total_yape, total_efectivo, id_usuario)
+                   VALUES ('$fecha', '$total_ventas', '$total_yape', '$total_efectivo', '$id_usuario')";
+
     $res_insert = mysqli_query($con, $sql_insert);
 
     if (!$res_insert) {
