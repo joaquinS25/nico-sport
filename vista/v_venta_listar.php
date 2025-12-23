@@ -1,5 +1,18 @@
 <div class="container-fluid px-4">
     <h1 class="mt-4">Lista de Ventas</h1>
+    <h5 class="text-muted">
+        Mostrando ventas del día: <b><?= $fecha ?></b>
+    </h5>
+    <div class="d-flex justify-content-start mb-3 gap-2">
+        <input type="date" id="fechaFiltro" class="form-control w-auto">
+        <button class="btn btn-primary" id="btnFiltrar">
+            Filtrar
+        </button>
+        <button class="btn btn-secondary" id="btnHoy">
+            Hoy
+        </button>
+    </div>
+
     <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
         <input type="date" id="fechaCierre" class="form-control w-auto" value="<?php echo date('Y-m-d'); ?>">
         <button id="btnCerrarCaja" class="btn btn-danger">
@@ -93,5 +106,19 @@ document.getElementById('btnCerrarCaja').addEventListener('click', function() {
             });
         }
     });
+});
+document.getElementById("btnFiltrar").addEventListener("click", function () {
+    let fecha = document.getElementById("fechaFiltro").value;
+
+    if (!fecha) {
+        alert("Selecciona una fecha");
+        return;
+    }
+
+    window.location.href = "venta_listar.php?fecha=" + fecha;
+});
+
+document.getElementById("btnHoy").addEventListener("click", function () {
+    window.location.href = "venta_listar.php";
 });
 </script>

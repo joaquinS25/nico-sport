@@ -26,6 +26,11 @@
                     require("modelo/m_venta.php");
 
                     $ventas = ListarVentas();
+
+                    
+                    $fecha = $_GET['fecha'] ?? date('Y-m-d');
+
+                    $ventas = ListarVentasPorFecha($fecha);
                     require("vista/v_venta_listar.php");
                     ?>
                 </main>

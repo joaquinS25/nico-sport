@@ -1,4 +1,33 @@
 <?php 
+function ListarVentasPorFecha($fecha)
+{
+    require("conexion.php");
+
+    $sql = "SELECT v.*, 
+                   mp.nom_medio_pago, 
+                   u.nom_usuario, 
+                   u.ape_usuario
+            FROM venta v
+            INNER JOIN medios_pago mp ON v.id_medio_pago = mp.id_medio_pago
+            INNER JOIN usuario u ON v.id_usuario = u.id_usuario
+            WHERE DATE(v.fecha_venta) = '$fecha'
+            ORDER BY v.fecha_venta DESC";
+
+    $res = mysqli_query($con, $sql);
+
+    if (!$res) {
+        die("Error SQL: " . mysqli_error($con));
+    }
+
+    $datos = [];
+    while ($fila = mysqli_fetch_assoc($res)) {
+        $datos[] = $fila;
+    }
+
+    return $datos;
+}
+
+
 function ListarVentas()
 {
 	require("conexion.php");
