@@ -1,3 +1,16 @@
+<?php
+$totalVendido  = 0;
+$totalEfectivo = 0;
+$totalYape     = 0;
+
+if (!empty($ventas)) {
+    foreach ($ventas as $value) {
+        $totalVendido  += $value['precio_venta'];
+        $totalEfectivo += $value['precio_efectivo'];
+        $totalYape     += $value['precio_yape'];
+    }
+}
+?>
 <div class="container-fluid px-4">
     <h1 class="mt-4">Lista de Ventas</h1>
     <h5 class="text-muted">
@@ -19,6 +32,34 @@
             <i class="fas fa-lock"></i> Cerrar Caja
         </button>
     </div>
+    <div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-success shadow">
+            <div class="card-body">
+                <h6 class="card-title">Total Vendido</h6>
+                <h3>S/ <?= number_format($totalVendido, 2) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-primary shadow">
+            <div class="card-body">
+                <h6 class="card-title">Total Efectivo</h6>
+                <h3>S/ <?= number_format($totalEfectivo, 2) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-warning shadow">
+            <div class="card-body">
+                <h6 class="card-title">Total Yape</h6>
+                <h3>S/ <?= number_format($totalYape, 2) ?></h3>
+            </div>
+        </div>
+    </div>
+</div>
 
     <div class="card mb-4">
         <div class="card-header"><i class="fas fa-table me-1"></i> Ventas</div>
@@ -44,6 +85,7 @@
                         $n=0;
                         foreach ($ventas as $value) {
                             $n++;
+                           
                         ?>
                         <tr>
                             <td><?= $n ?></td>
