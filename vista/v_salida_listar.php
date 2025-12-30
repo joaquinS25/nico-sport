@@ -49,7 +49,7 @@
             </table>
 
             <!-- 🔹 TOTAL DE SALIDA DE MERCADERÍA -->
-            <h3 class="text-end mt-3">
+            <!--h3 class="text-end mt-3" id="totalFiltrado">
                 Total: 
                 <b style="color:blue;">S/
                     <?php  
@@ -60,8 +60,15 @@
                         echo number_format($total_salida, 2);
                     ?>
                 </b>
+            </h3-->
+            <h3 class="text-end mt-3">
+                Total: 
+                <b style="color:blue;">
+                    <span id="totalFiltrado">S/ 0.00</span>
+                </b>
             </h3>
 
         </div>
     </div>
 </div>
+
