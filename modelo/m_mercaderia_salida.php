@@ -1,4 +1,13 @@
 <?php 
+function MarcarPago($id)
+{
+    require("conexion.php");
+
+    $sql = "UPDATE salida_mercaderia SET pago='SI' WHERE id_salida = '$id'";
+    $res = mysqli_query($con, $sql);
+
+    return $res ? "OK" : "ERROR";
+}
 function ListarSalida()
 {
 	require("conexion.php");

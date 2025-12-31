@@ -15,6 +15,8 @@
                         <th>Producto</th>
                         <th>Precio</th>
                         <th>Fecha Registro</th>
+                        <th>Pago</th>
+                        <th>Accion</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -25,6 +27,8 @@
                         <th>Producto</th>
                         <th>Precio</th>
                         <th>Fecha Registro</th>
+                        <th>Pago</th>
+                        <th>Accion</th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -41,6 +45,28 @@
                                 <td><?= $value['producto'] ?></td>
                                 <td><?= $value['precio'] ?></td>
                                 <td><?= $value['fecha_registro'] ?></td>
+                                <!-- COLUMNA PAGO -->
+                                <td>
+                                    <?php if ($value['pago'] == 'SI'): ?>
+                                        <span class="badge bg-success">Pagado</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-warning">Pendiente</span>
+                                    <?php endif; ?>
+                                </td>
+                                <!-- BOTÓN -->
+                                <td>
+                                    <?php if ($value['pago'] == 'NO'): ?>
+                                        <button 
+                                            class="btn btn-success btn-sm btn-pagar"
+                                            data-id="<?= $value['id_salida'] ?>">
+                                            Pagar
+                                        </button>
+                                    <?php else: ?>
+                                        <button class="btn btn-secondary btn-sm" disabled>
+                                            Pagado
+                                        </button>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php 
                         }
@@ -71,4 +97,43 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('click', function (e) {
 
+    if (e.target.classList.contains('btn-pagar')) {
+
+        let btn = e.target;
+        let id = btn.dataset.id;
+
+        Swal.fire({
+            title: '¿Confirmar pago?',
+            text: 'Esta acción no se puede revertir',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, pagar'
+        }).then(result => {
+
+            if (result.isConfirmed) {
+
+                fetch('pagar_salida.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'id=' + id
+                })
+                .then(res => res.text())
+                .then(resp => {
+
+                    if (resp === 'OK') {
+                        Swal.fire('Pagado', 'El pago fue registrado', 'success')
+                        .then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', 'No se pudo registrar el pago', 'error');
+                    }
+                });
+
+            }
+        });
+    }
+});
+</script>
