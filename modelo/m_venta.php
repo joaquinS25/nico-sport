@@ -83,6 +83,51 @@ function RegistrarVenta($cantidad, $nom_producto, $precio_venta, $id_medio_pago,
 	mysqli_close($con);
 }
 
+function ConsultarVenta($id_venta)
+{
+	require("conexion.php");
+
+	$sql="SELECT * FROM venta WHERE id_venta='$id_venta'";
+	$res = mysqli_query($con,$sql);
+
+	$datos = array();
+
+	while ($fila = mysqli_fetch_array($res,MYSQLI_ASSOC)) 
+	{
+		$datos[] = $fila;
+	}
+
+    mysqli_close($con);
+	return $datos;
+}
+
+function ActualizarVenta($id_venta,$cantidad,$nom_producto,$precio_venta,$precio_efectivo,$precio_yape, $id_medio_pago)
+{
+	require("conexion.php");
+
+	$sql="UPDATE venta SET
+	cantidad = '$cantidad',
+    nom_producto = '$nom_producto',
+	precio_venta = '$precio_venta',
+	precio_efectivo =  '$precio_efectivo', 
+	precio_yape =  '$precio_yape',
+    id_medio_pago = '$id_medio_pago'
+	WHERE id_venta = '$id_venta'";
+	$res = mysqli_query($con,$sql);
+	
+	if($res)
+	{
+		return "SI";		
+	}
+	else
+	{
+		return "NO";
+	}
+
+	mysqli_close($con);
+}
+
+
 function CalcularDiezmo($fecha_inicio, $fecha_fin)
 {
     require("conexion.php");

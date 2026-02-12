@@ -65,43 +65,52 @@ if (!empty($ventas)) {
         <div class="card-header"><i class="fas fa-table me-1"></i> Ventas</div>
         <div class="card-body">
             <div  class="">
-                <table id="datatablesSimple">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>ID</th>
-                            <th>Fecha Venta</th>
-                            <th>Cantidad</th>
-                            <th>Producto</th>
-                            <th>Precio Total</th>
-                            <th>Efectivo</th>
-                            <th>Yape</th>
-                            <th>Medio de Pago</th>
-                            <th>Usuario</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                        $n=0;
-                        foreach ($ventas as $value) {
-                            $n++;
-                           
-                        ?>
-                        <tr>
-                            <td><?= $n ?></td>
-                            <td><?= $value['id_venta'] ?></td>
-                            <td><?= $value['fecha_venta'] ?></td>
-                            <td><?= $value['cantidad'] ?></td>
-                            <td><?= $value['nom_producto'] ?></td>
-                            <td><?= $value['precio_venta'] ?></td>
-                            <td><?= $value['precio_efectivo'] ?></td>
-                            <td><?= $value['precio_yape'] ?></td>
-                            <td><?= $value['nom_medio_pago'] ?></td>
-                            <td><?= $value['nom_usuario']." ".$value['ape_usuario'] ?></td>
-                        </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
+                <form action="venta_listar.php" method="post">
+                    <table id="datatablesSimple">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>ID</th>
+                                <th>Fecha Venta</th>
+                                <th>Cantidad</th>
+                                <th>Producto</th>
+                                <th>Precio Total</th>
+                                <th>Efectivo</th>
+                                <th>Yape</th>
+                                <th>Medio de Pago</th>
+                                <th>Usuario</th>
+                                <th>Editar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $n=0;
+                            foreach ($ventas as $value) {
+                                $n++;
+                            
+                            ?>
+                            <tr>
+                                <td><?= $n ?></td>
+                                <td><?= $value['id_venta'] ?></td>
+                                <td><?= $value['fecha_venta'] ?></td>
+                                <td><?= $value['cantidad'] ?></td>
+                                <td><?= $value['nom_producto'] ?></td>
+                                <td><?= $value['precio_venta'] ?></td>
+                                <td><?= $value['precio_efectivo'] ?></td>
+                                <td><?= $value['precio_yape'] ?></td>
+                                <td><?= $value['nom_medio_pago'] ?></td>
+                                <td><?= $value['nom_usuario']." ".$value['ape_usuario'] ?></td>
+                                <td>
+                                   <button name="editar" type="submit" value="<?= $value['id_venta'] ?>" class="btn btn-sm btn-primary">
+                                        Editar
+                                    </button>
+
+                                </td>
+                            </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </form>    
             </div>
         </div>
     </div>

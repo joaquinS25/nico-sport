@@ -25,7 +25,21 @@
                    <?php
                     require("modelo/m_venta.php");
 
+
+                    //Si se presiona el boton editar
+                    if(isset($_REQUEST['editar']))
+                    {
+                        $id_venta = $_REQUEST['editar'];
+                        ?>
+                            <script type="text/javascript">
+                                location.href="venta_editar.php?id_venta=<?php echo $id_venta; ?>";
+                            </script>
+                        
+                        <?php
+                    }
+
                     $ventas = ListarVentas();
+
 
                     
                     $fecha = $_GET['fecha'] ?? date('Y-m-d');
