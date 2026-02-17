@@ -27,6 +27,57 @@ function ListarVentasPorFecha($fecha)
     return $datos;
 }
 
+function TotalCierrePorMes($mes, $anio)
+{
+    require("conexion.php");
+
+    $fecha_inicio = "$anio-$mes-01";
+    $fecha_fin = date("Y-m-t", strtotime($fecha_inicio));
+
+    $sql = "SELECT 
+                SUM(total_ventas) AS total_ventas,
+                SUM(total_efectivo) AS total_efectivo,
+                SUM(total_yape) AS total_yape
+            FROM cierre_caja
+            WHERE fecha_cierre BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+
+    $res = mysqli_query($con, $sql);
+
+    if(!$res){
+        die("Error en SQL: " . mysqli_error($con));
+    }
+
+    $data = mysqli_fetch_assoc($res);
+    mysqli_close($con);
+    return $data;
+}
+function CierresPorDia($mes, $anio)
+{
+    require("conexion.php");
+
+    $fecha_inicio = "$anio-$mes-01";
+    $fecha_fin = date("Y-m-t", strtotime($fecha_inicio));
+
+    $sql = "SELECT 
+                fecha_cierre,
+                total_ventas,
+                total_efectivo,
+                total_yape
+            FROM cierre_caja
+            WHERE fecha_cierre BETWEEN '$fecha_inicio' AND '$fecha_fin'
+            ORDER BY fecha_cierre ASC";
+
+    $res = mysqli_query($con, $sql);
+
+    $datos = [];
+    while($fila = mysqli_fetch_assoc($res)){
+        $datos[] = $fila;
+    }
+
+    mysqli_close($con);
+    return $datos;
+}
+
 
 function ListarVentas()
 {
