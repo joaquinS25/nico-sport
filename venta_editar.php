@@ -42,16 +42,19 @@
                         // 🔥 PRIMERO calculamos el total real
                         $total = $precio_efectivo + $precio_yape;
 
-                        // 🔥 AHORA movemos el dinero según el nuevo método
-                        if ($id_medio_pago == 6) {  // Yape
-                            $precio_yape = $total;
-                            $precio_efectivo = 0;
-                        }
+                            if ($id_medio_pago == 7) { // EFECTIVO
+                                $precio_efectivo = $precio_venta;
+                                $precio_yape = 0;
+                            }
 
-                        if ($id_medio_pago == 7) {  // Efectivo
-                            $precio_efectivo = $total;
-                            $precio_yape = 0;
-                        }
+                            if ($id_medio_pago == 6) { // YAPE
+                                $precio_yape = $precio_venta;
+                                $precio_efectivo = 0;
+                            }
+
+                            if ($id_medio_pago == 8) { // MIXTO (ajusta el id si es otro)
+                                $precio_venta = $precio_efectivo + $precio_yape;
+                            }
 
                         // 🔥 RECIÉN AQUÍ actualizamos
                         $rpta = ActualizarVenta(
