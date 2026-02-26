@@ -19,14 +19,22 @@
         <div class="card-body">
             <table id="datatablesSimple">
                 <thead>
-                    <tr>
+                     <tr>
                         <th>#</th>
                         <th>ID</th>
                         <th>Fecha Cierre</th>
                         <th>Total Ventas</th>
                         <th>Total Yape</th>
                         <th>Total Efectivo</th>
-                        
+
+                        <th>Total Egresos</th>
+                        <th>Egresos Yape</th>
+                        <th>Egresos Efectivo</th>
+
+                        <th>Ganancia Total</th>
+                        <th>Ganancia Yape</th>
+                        <th>Ganancia Efectivo</th>
+
                         <th>Usuario</th>
                     </tr>
                 </thead>
@@ -38,28 +46,45 @@
                         <th>Total Ventas</th>
                         <th>Total Yape</th>
                         <th>Total Efectivo</th>
+
+                        <th>Total Egresos</th>
+                        <th>Egresos Yape</th>
+                        <th>Egresos Efectivo</th>
+
+                        <th>Ganancia Total</th>
+                        <th>Ganancia Yape</th>
+                        <th>Ganancia Efectivo</th>
+
                         <th>Usuario</th>
                     </tr>
                 </tfoot>
                 <tbody>
                     <?php 
-                        $n=0;
-                        foreach ($ventas as $value) {
-                            $n++;
-                            ?>
-                            <tr>
-                                <td><?php echo $n; ?></td>
-                                <td><?php echo $value['id_cierre']; ?></td>
-                                <td><?php echo $value['fecha_cierre']; ?></td>
-                                <td><?php echo $value['total_ventas']; ?></td>
-                                <td><?= number_format($value['total_yape'], 2) ?></td>
-                                <td><?= number_format($value['total_efectivo'], 2) ?></td>
-                                <td><?php echo $value['nom_usuario']." ".$value['ape_usuario']; ?></td>
-                                
+                    $n=0;
+                    foreach ($ventas as $value) {
+                        $n++;
+                    ?>
+                    <tr>
+                        <td><?= $n ?></td>
+                        <td><?= $value['id_cierre'] ?></td>
+                        <td><?= $value['fecha_cierre'] ?></td>
+                        <td><?= number_format($value['total_ventas'],2) ?></td>
+                        <td><?= number_format($value['total_yape'],2) ?></td>
+                        <td><?= number_format($value['total_efectivo'],2) ?></td>
 
-                            </tr>
-                        <?php } ?>
+                        <td><?= number_format($value['total_egresos'],2) ?></td>
+                        <td><?= number_format($value['egresos_yape'],2) ?></td>
+                        <td><?= number_format($value['egresos_efectivo'],2) ?></td>
+
+                        <td><?= number_format($value['ganancia_total'],2) ?></td>
+                        <td><?= number_format($value['ganancia_yape'],2) ?></td>
+                        <td><?= number_format($value['ganancia_efectivo'],2) ?></td>
+
+                        <td><?= $value['nom_usuario']." ".$value['ape_usuario'] ?></td>
+                    </tr>
+                    <?php } ?>
                 </tbody>
+
             </table>
         </div>
     </div>

@@ -141,16 +141,23 @@ document.getElementById('btnCerrarCaja').addEventListener('click', function() {
                 body: 'fecha=' + encodeURIComponent(fecha)
             })
             .then(response => response.text())
-            .then(data => {
-                if (data === 'OK') {
-                    Swal.fire('Caja cerrada', 'El total de ventas se registró correctamente.', 'success');
-                } else if (data === 'YA_CERRADO') {
-                    Swal.fire('Ya cerrada', `La caja del ${fecha} ya fue cerrada.`, 'info');
-                } else {
-                    Swal.fire('Error', 'Hubo un problema al cerrar la caja.', 'error');
-                    console.error(data);
-                }
-            })
+           .then(data => {
+    data = data.trim();
+
+    console.log("Respuesta servidor:", data); // 👈 IMPORTANTE
+
+    if (data === 'OK') {
+        Swal.fire('Caja cerrada', 'El total se registró correctamente.', 'success');
+    } 
+    else if (data === 'YA_CERRADO') {
+        Swal.fire('Ya cerrada', `La caja del ${fecha} ya fue cerrada.`, 'info');
+    } 
+    else {
+        Swal.fire('Error', data, 'error'); // 👈 mostrar error real
+    }
+})
+
+
             .catch(err => {
                 Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
                 console.error(err);

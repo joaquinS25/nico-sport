@@ -65,7 +65,71 @@
         </div>
     </div>
 </div>
+
+<div class="row mt-3">
+
+    <div class="col-md-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5>Total Egresos</h5>
+                <h3>S/ <?= number_format($totalEgresos,2) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-dark text-white">
+            <div class="card-body">
+                <h5>Egresos Efectivo</h5>
+                <h3>S/ <?= number_format($egresosEfectivo,2) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-secondary text-white">
+            <div class="card-body">
+                <h5>Egresos Yape</h5>
+                <h3>S/ <?= number_format($egresosYape,2) ?></h3>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<div class="row mt-3">
+
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5>Ganancia Total</h5>
+                <h3>S/ <?= number_format($gananciaTotal,2) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5>Ganancia Efectivo</h5>
+                <h3>S/ <?= number_format($gananciaEfectivo,2) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5>Ganancia Yape</h5>
+                <h3>S/ <?= number_format($gananciaYape,2) ?></h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+
 <div class="card mt-4">
     <div class="card-header">
         Ventas por día del mes seleccionado

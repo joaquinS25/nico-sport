@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Dashboard</title>
+        <title>Lista de Egresos</title>
         <?php
          require("vista/estilos.php");
         ?>
@@ -23,29 +23,29 @@
             <div id="layoutSidenav_content">
                 <main>
                    <?php
-                   require("modelo/m_venta.php");
-
-                    $mes = isset($_POST['mes']) ? $_POST['mes'] : date('m');
-                    $anio = isset($_POST['anio']) ? $_POST['anio'] : date('Y');
+                    require("modelo/m_egreso.php");
 
 
-                    $totales = TotalCierrePorMes($mes, $anio);
-                    $ventasDia = CierresPorDia($mes, $anio);
+                    //Si se presiona el boton editar
+                    if(isset($_REQUEST['editar']))
+                    {
+                        $id_egreso = $_REQUEST['editar'];
+                        ?>
+                            <script type="text/javascript">
+                                location.href="egreso_editar.php?id_egreso=<?php echo $id_egreso; ?>";
+                            </script>
+                        
+                        <?php
+                    }
 
-                    $totalVendido = $totales['total_ventas'] ?? 0;
-                    $totalEfectivo = $totales['total_efectivo'] ?? 0;
-                    $totalYape = $totales['total_yape'] ?? 0;
-
-                    $totalEgresos = $totales['total_egresos'] ?? 0;
-                    $egresosYape = $totales['egresos_yape'] ?? 0;
-                    $egresosEfectivo = $totales['egresos_efectivo'] ?? 0;
-
-                    $gananciaTotal = $totales['ganancia_total'] ?? 0;
-                    $gananciaYape = $totales['ganancia_yape'] ?? 0;
-                    $gananciaEfectivo = $totales['ganancia_efectivo'] ?? 0;
+                    $egresos = ListarEgresos();
 
 
-                    require("vista/v_dashboard_listar.php");
+                    
+                    $fecha = $_GET['fecha'] ?? date('Y-m-d');
+
+                    $egresos = ListarEgresosPorFecha($fecha);
+                    require("vista/v_egreso_listar.php");
                     ?>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
