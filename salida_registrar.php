@@ -37,11 +37,22 @@
 
                         if($rpta=="SI")
                         {
-                            ?>
-                            <script type="text/javascript">
-                                location.href="salida_listar.php";
-                            </script>
-                            <?php
+                        ?>
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                        <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Registro exitoso!',
+                            text: 'La salida de mercadería fue registrada correctamente.',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if(result.isConfirmed){
+                                window.location = "salida_listar.php";
+                            }
+                        });
+                        </script>
+                        <?php
                         }
 
                     }

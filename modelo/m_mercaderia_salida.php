@@ -30,18 +30,18 @@ function RegistrarSalida($nombre,$cantidad,$producto,$precio,$fecha_registro)
 {
     require("conexion.php");
 
-	$sql="INSERT INTO salida_mercaderia() VALUES(NULL,'$nombre','$cantidad','$producto','$precio','$fecha_registro')";
-	$res = mysqli_query($con,$sql);
+    $sql = "INSERT INTO salida_mercaderia
+    (nombre,cantidad,producto,precio,fecha_registro)
+    VALUES
+    ('$nombre','$cantidad','$producto','$precio','$fecha_registro')";
 
-	if($res)
-	{
-		return "SI";		
-	}
-	else
-	{
-		return "NO";
-	}
+    $res = mysqli_query($con,$sql);
 
-	mysqli_close($con);
+    if(!$res)
+    {
+        die(mysqli_error($con));
+    }
+
+    return "SI";
 }
 ?>
