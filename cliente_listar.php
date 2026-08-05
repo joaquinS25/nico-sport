@@ -30,7 +30,7 @@
                     //Si se presiona el boton editar
                     if(isset($_REQUEST['editar']))
                     {
-                        $id_usuario = $_REQUEST['editar'];
+                        $id_cliente = $_REQUEST['editar'];
                         ?>
                             <script type="text/javascript">
                                 location.href="cliente_editar.php?id_cliente=<?php echo $id_cliente; ?>";
