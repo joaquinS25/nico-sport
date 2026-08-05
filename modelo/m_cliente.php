@@ -22,21 +22,23 @@ function ListarClientes()
 
 function RegistrarCliente($nom_cliente, $cel_cliente, $tienda_cliente)
 {
-	require("conexion.php");
+    require("conexion.php");
 
-	$sql="INSERT INTO cliente() VALUES(NULL,'$nom_cliente','$cel_cliente','$tienda_cliente')";
-	$res = mysqli_query($con,$sql);
+    $sql = "INSERT INTO cliente
+            (nom_cliente, cel_cliente, tienda_cliente)
+            VALUES
+            ('$nom_cliente', '$cel_cliente', '$tienda_cliente')";
 
-	if($res)
-	{
-		return "SI";		
-	}
-	else
-	{
-		return "NO";
-	}
+    $res = mysqli_query($con, $sql);
 
-	mysqli_close($con);
+    if(!$res)
+    {
+        die("ERROR AL REGISTRAR CLIENTE: " . mysqli_error($con));
+    }
+
+    mysqli_close($con);
+
+    return "SI";
 }
 
 function EliminarCliente($id_cliente)

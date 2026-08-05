@@ -52,7 +52,20 @@ require("vista/menuh.php");
                         location.href = 'cliente_listar.php';
                     });
                     </script>";
-                }
+                }else {
+
+                echo "
+                <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+
+                <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo registrar el cliente.',
+                    confirmButtonText: 'Aceptar'
+                });
+                </script>";
+            }
             }
 
             require("vista/v_cliente_registrar.php");
