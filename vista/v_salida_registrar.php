@@ -16,10 +16,19 @@
 
                 <div class="row g-3">
                   
-                  <div class="col-md-6">
+                  <!--div class="col-md-6">
                     <input type="text" name="nombre" class="form-control" placeholder="Nombre" aria-label="Nombre" required="required">
-                  </div>
-
+                  </div-->
+                  <div class="col-md-6">
+                        <select id="cliente" name="id_cliente" class="form-control" required>
+                            <option value="" disabled selected>Seleccione cliente</option>
+                            <?php foreach ($cliente as $value) { ?>
+                                <option value="<?= $value['id_cliente'] ?>">
+                                    <?= $value['nom_cliente'] ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    </div>
                   <div class="col-md-6">
                     <input type="text" name="cantidad" class="form-control" placeholder="Cantidad" aria-label="Cantidad" required="required">
                   </div>

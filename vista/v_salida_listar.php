@@ -40,7 +40,7 @@
                             ?>
                             <tr>
                                 <td><?= $n ?></td>
-                                <td><?= $value['nombre'] ?></td>
+                                <td><?= $value['nom_cliente'] ?></td>
                                 <td><?= $value['cantidad'] ?></td>
                                 <td><?= $value['producto'] ?></td>
                                 <td><?= $value['precio'] ?></td>

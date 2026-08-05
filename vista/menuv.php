@@ -39,6 +39,18 @@ if (!isset($_SESSION['autentificado']) || !$_SESSION['autentificado']) {
                         <a class="nav-link" href="diezmo_listar.php">Diezmo</a>
                     </nav>
                 </div>
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#cliente"
+                   aria-expanded="false">
+                    <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                    Clientes
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="cliente" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link" href="cliente_listar.php">Listado</a>
+                        <a class="nav-link" href="cliente_registrar.php">Nuevo</a>
+                    </nav>
+                </div>
                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#egreso"
                    aria-expanded="false">
                     <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
