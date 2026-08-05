@@ -25,9 +25,20 @@ function ListarSalida()
 {
     require("conexion.php");
 
-    $sql = "SELECT sm.*, c.nom_cliente
+    $sql = "SELECT 
+                sm.id_salida,
+                sm.id_cliente,
+                c.nom_cliente,
+                c.cel_cliente,
+                sm.cantidad,
+                sm.producto,
+                sm.precio,
+                sm.fecha_registro,
+                sm.pago
             FROM salida_mercaderia sm
-            INNER JOIN cliente c ON sm.id_cliente = c.id_cliente";
+            INNER JOIN cliente c 
+                ON sm.id_cliente = c.id_cliente
+            ORDER BY sm.id_salida DESC";
 
     $res = mysqli_query($con, $sql);
 
@@ -38,7 +49,7 @@ function ListarSalida()
 
     $datos = array();
 
-    while ($fila = mysqli_fetch_array($res, MYSQLI_ASSOC))
+    while ($fila = mysqli_fetch_assoc($res))
     {
         $datos[] = $fila;
     }

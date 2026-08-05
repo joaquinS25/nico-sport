@@ -12,6 +12,7 @@
          require("vista/estilos.php");
         ?>
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
