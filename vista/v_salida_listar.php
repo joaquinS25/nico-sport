@@ -16,7 +16,7 @@
                         <th>Producto</th>
                         <th>Precio</th>
                         <th>Fecha Registro</th>
-                        <th>Pago</th>
+                        <th>Estado</th>
                         <th>Accion</th>
                     </tr>
                 </thead>
@@ -29,7 +29,7 @@
                         <th>Producto</th>
                         <th>Precio</th>
                         <th>Fecha Registro</th>
-                        <th>Pago</th>
+                        <th>Estado</th>
                         <th>Accion</th>
                     </tr>
                 </tfoot>
@@ -41,7 +41,9 @@
                             $n++;
                             ?>
                             <tr
-                             data-celular="<?= htmlspecialchars($value['cel_cliente']) ?>"
+                             data-id-cliente="<?= htmlspecialchars($value['id_cliente'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                             data-celular="<?= htmlspecialchars($value['cel_cliente'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                             data-total-pagado="<?= htmlspecialchars($value['total_pagado'] ?? '0', ENT_QUOTES, 'UTF-8') ?>"
                             >
                                 <td><?= $n ?></td>
                                 <td><?= $value['nom_cliente'] ?></td>
@@ -52,18 +54,44 @@
                                 <td><?= $value['fecha_registro'] ?></td>
                                 <!-- COLUMNA PAGO -->
                                 <td>
-                                    <?php if ($value['pago'] == 'SI'): ?>
-                                        <span class="badge bg-success">Pagado</span>
+
+                                    <?php
+                                        $total_pagado = floatval($value['total_pagado']);
+                                    ?>
+
+                                    <?php if ($total_pagado > 0): ?>
+
+                                        <span class="badge bg-success">
+                                            Pagó S/ <?= number_format($total_pagado, 2) ?>
+                                        </span>
+
                                     <?php else: ?>
-                                        <span class="badge bg-warning">Pendiente</span>
+
+                                        <span class="badge bg-warning">
+                                            Sin pagos
+                                        </span>
+
                                     <?php endif; ?>
+
                                 </td>
                                 <!-- BOTÓN -->
                                 <td>
                                     <?php if ($value['pago'] == 'NO'): ?>
                                         <button 
+                                            type="button"
                                             class="btn btn-success btn-sm btn-pagar"
-                                            data-id="<?= $value['id_salida'] ?>">
+
+                                            data-id="<?= htmlspecialchars($value['id_salida'] ?? '') ?>"
+
+                                            data-id-cliente="<?= htmlspecialchars($value['id_cliente'] ?? '') ?>"
+
+                                            data-nombre="<?= htmlspecialchars($value['nom_cliente'] ?? '') ?>"
+
+                                            data-precio="<?= htmlspecialchars($value['precio'] ?? '0') ?>"
+
+                                            data-total-pagado="<?= htmlspecialchars($value['total_pagado'] ?? '0') ?>"
+
+                                        >
                                             Pagar
                                         </button>
                                     <?php else: ?>
@@ -79,7 +107,11 @@
                 </tbody>
             </table>
            <div class="text-end mt-3">
-
+                
+                <button type="button" id="btnRegistrarPago" class="btn btn-warning ms-2">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Registrar pago
+                </button>
                 <button type="button" id="btnWhatsApp" class="btn btn-success">
                     <i class="fab fa-whatsapp"></i>
                     Enviar por WhatsApp
@@ -113,6 +145,135 @@
 
         </div>
     </div>
+</div>
+<!-- =====================================================
+     MODAL REGISTRAR PAGO
+===================================================== -->
+
+<div class="modal fade" id="modalRegistrarPago" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Registrar pago
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <form id="formRegistrarPago">
+
+                    <input
+                        type="hidden"
+                        id="id_cliente_pago"
+                        name="id_cliente"
+                    >
+                    <input
+                        type="hidden"
+                        id="id_salida_pago"
+                        name="id_salida"
+                    >                            
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Cliente
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre_cliente_pago"
+                            class="form-control"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Monto a pagar
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                S/
+                            </span>
+
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                id="monto_pago"
+                                name="monto"
+                                class="form-control"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Fecha del pago
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fecha_pago"
+                            name="fecha_pago"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div
+                        id="informacionDeuda"
+                        class="alert alert-info"
+                    >
+                        Seleccione un cliente.
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-success w-100"
+                    >
+
+                        <i class="fas fa-save"></i>
+
+                        Registrar pago
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -397,36 +558,42 @@ document.getElementById('btnWhatsApp').addEventListener('click', function () {
     // RECORRER LAS DEUDAS DEL CLIENTE
     // =====================================================
 
+    
+
+
+    // =====================================================
+    // OBTENER TOTAL PAGADO DESDE EL BOTÓN
+    // =====================================================
+
+    const botonPago =
+        primeraFila.querySelector('.btn-pagar');
+
+    let totalPagado = 0;
+
+    if (botonPago) {
+
+        totalPagado =
+            parseFloat(
+                botonPago.getAttribute('data-total-pagado') || '0'
+            );
+
+    }
+
+
+    // =====================================================
+    // SUMAR TODAS LAS SALIDAS DEL CLIENTE
+    // =====================================================
+
     filasCliente.forEach(function(fila) {
 
         const celdas =
             fila.querySelectorAll('td');
 
-
-        // ================================================
-        // COLUMNAS ACTUALES
-        // ================================================
-        //
-        // 0 = #
-        // 1 = Nombre
-        // 2 = Celular
-        // 3 = Cantidad
-        // 4 = Producto
-        // 5 = Precio
-        // 6 = Fecha
-        // 7 = Pago
-        // 8 = Acción
-        //
-        // ================================================
-
-
         const cantidad =
             celdas[3].innerText.trim();
 
-
         const producto =
             celdas[4].innerText.trim();
-
 
         const precioTexto =
             celdas[5].innerText
@@ -434,90 +601,99 @@ document.getElementById('btnWhatsApp').addEventListener('click', function () {
                 .replace(',', '')
                 .trim();
 
-
         const precio =
             parseFloat(precioTexto) || 0;
-
 
         const fecha =
             celdas[6].innerText.trim();
 
 
-        const pago =
-            celdas[7].innerText
-                .trim()
-                .toLowerCase();
+        // Sumar el precio completo
+        total += precio;
 
 
-        // ================================================
-        // SOLO PENDIENTES
-        // ================================================
+        // Agregar el producto a la imagen
+        filasHTML += `
 
-        if (pago.includes('pendiente')) {
+            <tr>
 
-            total += precio;
+                <td style="
+                    padding:10px;
+                    border-bottom:1px solid #ddd;
+                ">
+                    ${producto}
+                </td>
 
+                <td style="
+                    padding:10px;
+                    border-bottom:1px solid #ddd;
+                    text-align:center;
+                ">
+                    ${cantidad}
+                </td>
 
-            filasHTML += `
+                <td style="
+                    padding:10px;
+                    border-bottom:1px solid #ddd;
+                    text-align:right;
+                ">
+                    S/ ${precio.toFixed(2)}
+                </td>
 
-                <tr>
+                <td style="
+                    padding:10px;
+                    border-bottom:1px solid #ddd;
+                    text-align:center;
+                ">
+                    ${fecha}
+                </td>
 
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #ddd;
-                    ">
-                        ${producto}
-                    </td>
+            </tr>
 
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #ddd;
-                        text-align:center;
-                    ">
-                        ${cantidad}
-                    </td>
-
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #ddd;
-                        text-align:right;
-                    ">
-                        S/ ${precio.toFixed(2)}
-                    </td>
-
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #ddd;
-                        text-align:center;
-                    ">
-                        ${fecha}
-                    </td>
-
-                </tr>
-
-            `;
-
-        }
+        `;
 
     });
 
 
     // =====================================================
-    // VERIFICAR SI TIENE DEUDA
+    // CALCULAR SALDO REAL
     // =====================================================
 
-    if (total <= 0) {
+    const saldoPendiente =
+        Math.max(total - totalPagado, 0);
+
+
+        console.log('==============================');
+        console.log('TOTAL SALIDAS:', total);
+        console.log('TOTAL PAGADO:', totalPagado);
+        console.log('SALDO PENDIENTE:', saldoPendiente);
+        console.log('==============================');
+
+
+        // =====================================================
+        // VERIFICAR SI TIENE DEUDA
+        // =====================================================
+
+    if (saldoPendiente <= 0) {
 
         Swal.fire({
+
             icon: 'info',
+
             title: 'Sin deuda pendiente',
-            text: nombreCliente +
-                  ' no tiene pagos pendientes.',
+
+            text:
+                nombreCliente +
+                ' no tiene pagos pendientes.',
+
             confirmButtonText: 'Aceptar'
+
         });
 
         return;
     }
+
+
 
 
     // =====================================================
@@ -630,24 +806,30 @@ document.getElementById('btnWhatsApp').addEventListener('click', function () {
                 padding:18px;
                 background:#f5f5f5;
                 border-radius:10px;
-                text-align:right;
             ">
 
-                <span style="
-                    font-size:18px;
-                    font-weight:bold;
-                ">
-                    TOTAL PENDIENTE:
-                </span>
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <strong>Total de deuda:</strong>
+                    <span>S/ ${total.toFixed(2)}</span>
+                </div>
 
-                <span style="
-                    margin-left:10px;
-                    font-size:28px;
-                    font-weight:bold;
-                    color:#003cff;
-                ">
-                    S/ ${total.toFixed(2)}
-                </span>
+                <div style="display:flex;justify-content:space-between;margin-bottom:15px;color:#198754;">
+                    <strong>Total pagado:</strong>
+                    <span>S/ ${totalPagado.toFixed(2)}</span>
+                </div>
+
+                <hr>
+
+                <div style="display:flex;justify-content:space-between;
+                            font-size:28px;
+                            font-weight:bold;
+                            color:#e53935;">
+
+                    <span>SALDO PENDIENTE:</span>
+
+                    <span>S/ ${saldoPendiente.toFixed(2)}</span>
+
+                </div>
 
             </div>
 
@@ -841,26 +1023,61 @@ document.getElementById('btnWhatsApp').addEventListener('click', function () {
     });
 
 });
-document.getElementById('btnGenerarImagen').addEventListener('click', function () {
+// =====================================================
+// GENERAR IMAGEN - VERSIÓN CORREGIDA
+// =====================================================
+
+document.addEventListener('click', function (e) {
+
+    // Verificar si se presionó el botón
+    const boton = e.target.closest('#btnGenerarImagen');
+
+    if (!boton) {
+        return;
+    }
+
+    console.log('=================================');
+    console.log('BOTÓN GENERAR IMAGEN PRESIONADO');
+    console.log('=================================');
+
 
     // =====================================================
-    // OBTENER BUSCADOR
+    // BUSCADOR DATATABLES
     // =====================================================
 
-    let searchInput =
+    const searchInput =
         document.querySelector('.dataTable-input') ||
         document.querySelector('#datatablesSimple_wrapper input[type="search"]') ||
         document.querySelector('input[type="search"]');
 
-    let nombreBuscado = '';
 
-    if (searchInput) {
-        nombreBuscado = searchInput.value.trim().toLowerCase();
+    if (!searchInput) {
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se encontró el buscador de la tabla.'
+        });
+
+        console.error('No se encontró el buscador de DataTables');
+
+        return;
     }
 
 
     // =====================================================
-    // VERIFICAR QUE HAYA UN CLIENTE SELECCIONADO
+    // NOMBRE BUSCADO
+    // =====================================================
+
+    const nombreBuscado =
+        searchInput.value.trim().toLowerCase();
+
+
+    console.log('CLIENTE BUSCADO:', nombreBuscado);
+
+
+    // =====================================================
+    // VALIDAR CLIENTE
     // =====================================================
 
     if (!nombreBuscado) {
@@ -880,38 +1097,47 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
     // OBTENER FILAS
     // =====================================================
 
-    const todasLasFilas = Array.from(
-        document.querySelectorAll('#datatablesSimple tbody tr')
-    );
+    const todasLasFilas =
+        Array.from(
+            document.querySelectorAll(
+                '#datatablesSimple tbody tr'
+            )
+        );
 
 
-    const filas = todasLasFilas.filter(function (fila) {
+    const filas =
+        todasLasFilas.filter(function (fila) {
 
-        const celdas = fila.querySelectorAll('td');
+            return fila.querySelectorAll('td').length >= 9;
 
-        return celdas.length >= 9;
-
-    });
+        });
 
 
     // =====================================================
     // FILTRAR CLIENTE
     // =====================================================
 
-    const filasCliente = filas.filter(function (fila) {
+    const filasCliente =
+        filas.filter(function (fila) {
 
-        const celdas = fila.querySelectorAll('td');
+            const celdas =
+                fila.querySelectorAll('td');
 
-        const nombre =
-            celdas[1].innerText.trim().toLowerCase();
 
-        return nombre.includes(nombreBuscado);
+            const nombre =
+                celdas[1]
+                    .innerText
+                    .trim()
+                    .toLowerCase();
 
-    });
+
+            return nombre.includes(nombreBuscado);
+
+        });
 
 
     // =====================================================
-    // CLIENTE NO ENCONTRADO
+    // VALIDAR RESULTADO
     // =====================================================
 
     if (filasCliente.length === 0) {
@@ -931,33 +1157,39 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
     // DATOS DEL CLIENTE
     // =====================================================
 
-    const primeraFila = filasCliente[0];
+    const primeraFila =
+        filasCliente[0];
+
 
     const celdasPrimeraFila =
         primeraFila.querySelectorAll('td');
 
 
     const nombreCliente =
-        celdasPrimeraFila[1].innerText.trim();
+        celdasPrimeraFila[1]
+            .innerText
+            .trim();
 
 
     let celular =
-        primeraFila.getAttribute('data-celular');
+        primeraFila.dataset.celular || '';
 
 
-    if (!celular || celular.trim() === '') {
+    if (!celular.trim()) {
 
         celular =
-            celdasPrimeraFila[2].innerText.trim();
+            celdasPrimeraFila[2]
+                .innerText
+                .trim();
 
     }
 
 
     // =====================================================
-    // CREAR TABLA DE LA CAPTURA
+    // TOTAL DE LA DEUDA
     // =====================================================
 
-    let total = 0;
+    let totalDeuda = 0;
 
     let filasHTML = '';
 
@@ -968,32 +1200,23 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
             fila.querySelectorAll('td');
 
 
-        // ================================================
-        // COLUMNAS
-        // 0 = #
-        // 1 = Nombre
-        // 2 = Celular
-        // 3 = Cantidad
-        // 4 = Producto
-        // 5 = Precio
-        // 6 = Fecha
-        // 7 = Pago
-        // 8 = Acción
-        // ================================================
-
-
         const cantidad =
-            celdas[3].innerText.trim();
+            celdas[3]
+                .innerText
+                .trim();
 
 
         const producto =
-            celdas[4].innerText.trim();
+            celdas[4]
+                .innerText
+                .trim();
 
 
         const precioTexto =
-            celdas[5].innerText
+            celdas[5]
+                .innerText
                 .replace('S/', '')
-                .replace(',', '')
+                .replace(/,/g, '')
                 .trim();
 
 
@@ -1002,76 +1225,131 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
 
 
         const fecha =
-            celdas[6].innerText.trim();
+            celdas[6]
+                .innerText
+                .trim();
 
 
-        const pago =
-            celdas[7].innerText
-                .trim()
-                .toLowerCase();
+        // Sumar todas las ventas
+        totalDeuda += precio;
 
 
-        // SOLO PENDIENTES
+        // Agregar producto
+        filasHTML += `
 
-        if (pago.includes('pendiente')) {
+            <tr>
 
-            total += precio;
+                <td style="
+                    padding:12px;
+                    border-bottom:1px solid #ddd;
+                ">
+                    ${producto}
+                </td>
+
+                <td style="
+                    padding:12px;
+                    border-bottom:1px solid #ddd;
+                    text-align:center;
+                ">
+                    ${cantidad}
+                </td>
+
+                <td style="
+                    padding:12px;
+                    border-bottom:1px solid #ddd;
+                    text-align:right;
+                ">
+                    S/ ${precio.toFixed(2)}
+                </td>
+
+                <td style="
+                    padding:12px;
+                    border-bottom:1px solid #ddd;
+                    text-align:center;
+                ">
+                    ${fecha}
+                </td>
+
+            </tr>
+
+        `;
+
+    });
 
 
-            filasHTML += `
+    // =====================================================
+    // TOTAL PAGADO DEL CLIENTE
+    // =====================================================
 
-                <tr>
+    let totalPagado = 0;
 
-                    <td style="
-                        padding:12px;
-                        border-bottom:1px solid #ddd;
-                    ">
-                        ${producto}
-                    </td>
+    filasCliente.forEach(function(fila) {
 
-                    <td style="
-                        padding:12px;
-                        border-bottom:1px solid #ddd;
-                        text-align:center;
-                    ">
-                        ${cantidad}
-                    </td>
+        const valorPagado = parseFloat(
+            fila.getAttribute('data-total-pagado') || '0'
+        );
 
-                    <td style="
-                        padding:12px;
-                        border-bottom:1px solid #ddd;
-                        text-align:right;
-                    ">
-                        S/ ${precio.toFixed(2)}
-                    </td>
-
-                    <td style="
-                        padding:12px;
-                        border-bottom:1px solid #ddd;
-                        text-align:center;
-                    ">
-                        ${fecha}
-                    </td>
-
-                </tr>
-
-            `;
-
+        if (!isNaN(valorPagado) && valorPagado > totalPagado) {
+            totalPagado = valorPagado;
         }
 
     });
+
+console.log("TOTAL PAGADO ENCONTRADO:", totalPagado);
+
+
+    // =====================================================
+    // SALDO PENDIENTE
+    // =====================================================
+
+    let saldoPendiente =
+        totalDeuda - totalPagado;
+
+
+    // Evitar negativos
+    if (saldoPendiente < 0) {
+        saldoPendiente = 0;
+    }
+
+
+    // Redondear
+    totalDeuda =
+        Number(totalDeuda.toFixed(2));
+
+    totalPagado =
+        Number(totalPagado.toFixed(2));
+
+    saldoPendiente =
+        Number(saldoPendiente.toFixed(2));
+
+
+    console.log('=================================');
+    console.log('CLIENTE:', nombreCliente);
+    console.log('TOTAL DEUDA:', totalDeuda);
+    console.log('TOTAL PAGADO:', totalPagado);
+    console.log('SALDO PENDIENTE:', saldoPendiente);
+    console.log('=================================');
 
 
     // =====================================================
     // VERIFICAR DEUDA
     // =====================================================
 
-    if (total <= 0) {
+    if (saldoPendiente <= 0) {
 
         Swal.fire({
             icon: 'info',
             title: 'Sin deuda pendiente',
-            text: nombreCliente + ' no tiene pagos pendientes.',
+            html:
+                '<b>' + nombreCliente + '</b><br><br>' +
+
+                'Total de deuda: <b>S/ ' +
+                totalDeuda.toFixed(2) +
+                '</b><br>' +
+
+                'Total pagado: <b>S/ ' +
+                totalPagado.toFixed(2) +
+                '</b>',
             confirmButtonText: 'Aceptar'
         });
 
@@ -1106,6 +1384,8 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
             background:white;
         ">
 
+            <!-- ENCABEZADO -->
+
             <div style="
                 text-align:center;
                 margin-bottom:25px;
@@ -1131,11 +1411,13 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
                     margin:15px 0 0;
                     font-size:22px;
                 ">
-                    NOTA DE VENTA
+                    ESTADO DE CUENTA
                 </h2>
 
             </div>
 
+
+            <!-- CLIENTE -->
 
             <div style="
                 background:#f5f5f5;
@@ -1156,6 +1438,8 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
 
             </div>
 
+
+            <!-- TABLA -->
 
             <table style="
                 width:100%;
@@ -1201,6 +1485,7 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
 
                 </thead>
 
+
                 <tbody>
 
                     ${filasHTML}
@@ -1210,32 +1495,75 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
             </table>
 
 
+            <!-- RESUMEN -->
+
             <div style="
                 margin-top:30px;
-                padding:18px;
+                padding:20px;
                 background:#f5f5f5;
                 border-radius:10px;
-                text-align:right;
             ">
 
-                <span style="
-                    font-size:18px;
-                    font-weight:bold;
+                <div style="
+                    text-align:right;
+                    font-size:17px;
+                    margin-bottom:8px;
                 ">
-                    TOTAL PENDIENTE:
-                </span>
 
-                <span style="
-                    margin-left:10px;
-                    font-size:28px;
-                    font-weight:bold;
-                    color:#003cff;
+                    <strong>
+                        Total de deuda:
+                    </strong>
+
+                    S/ ${totalDeuda.toFixed(2)}
+
+                </div>
+
+
+                <div style="
+                    text-align:right;
+                    font-size:17px;
+                    margin-bottom:8px;
+                    color:#198754;
                 ">
-                    S/ ${total.toFixed(2)}
-                </span>
+
+                    <strong>
+                        Total pagado:
+                    </strong>
+
+                    S/ ${totalPagado.toFixed(2)}
+
+                </div>
+
+
+                <div style="
+                    border-top:2px solid #ccc;
+                    margin-top:10px;
+                    padding-top:12px;
+                    text-align:right;
+                ">
+
+                    <span style="
+                        font-size:20px;
+                        font-weight:bold;
+                    ">
+                        SALDO PENDIENTE:
+                    </span>
+
+                    <span style="
+                        margin-left:10px;
+                        font-size:30px;
+                        font-weight:bold;
+                        color:#dc3545;
+                    ">
+                        S/ ${saldoPendiente.toFixed(2)}
+                    </span>
+
+                </div>
 
             </div>
 
+
+            <!-- PIE -->
 
             <div style="
                 text-align:center;
@@ -1261,6 +1589,30 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
 
 
     // =====================================================
+    // VERIFICAR HTML2CANVAS
+    // =====================================================
+
+    if (typeof html2canvas === 'undefined') {
+
+        if (document.body.contains(captura)) {
+            document.body.removeChild(captura);
+        }
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Falta html2canvas',
+            text: 'La librería html2canvas no está cargada.'
+        });
+
+        console.error(
+            'ERROR: html2canvas no está definido.'
+        );
+
+        return;
+    }
+
+
+    // =====================================================
     // GENERAR IMAGEN
     // =====================================================
 
@@ -1272,10 +1624,14 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
 
         useCORS: true
 
-    }).then(function (canvas) {
+    })
+
+    .then(function (canvas) {
 
 
-        document.body.removeChild(captura);
+        if (document.body.contains(captura)) {
+            document.body.removeChild(captura);
+        }
 
 
         const imagen =
@@ -1283,7 +1639,7 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
 
 
         // =================================================
-        // MOSTRAR IMAGEN EN SWEET ALERT
+        // MOSTRAR IMAGEN
         // =================================================
 
         Swal.fire({
@@ -1324,11 +1680,9 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
 
             showCloseButton: true
 
-        }).then(function (result) {
+        })
 
-            // =================================================
-            // DESCARGAR IMAGEN
-            // =================================================
+        .then(function (result) {
 
             if (result.isConfirmed) {
 
@@ -1336,11 +1690,12 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
                     document.createElement('a');
 
 
-                enlace.href = imagen;
+                enlace.href =
+                    imagen;
 
 
                 enlace.download =
-                    'deuda_' +
+                    'estado_cuenta_' +
                     nombreCliente +
                     '.png';
 
@@ -1359,9 +1714,9 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
                     title: 'Imagen descargada',
 
                     text:
-                        'La imagen de ' +
+                        'El estado de cuenta de ' +
                         nombreCliente +
-                        ' fue descargada correctamente.',
+                        ' fue descargado correctamente.',
 
                     confirmButtonText: 'Aceptar'
 
@@ -1371,15 +1726,19 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
 
         });
 
-    }).catch(function (error) {
+    })
 
-        console.error(error);
+    .catch(function (error) {
+
+
+        console.error(
+            'ERROR AL GENERAR IMAGEN:',
+            error
+        );
 
 
         if (document.body.contains(captura)) {
-
             document.body.removeChild(captura);
-
         }
 
 
@@ -1390,13 +1749,656 @@ document.getElementById('btnGenerarImagen').addEventListener('click', function (
             title: 'Error',
 
             text:
-                'No se pudo generar la imagen.',
+                'No se pudo generar la imagen. Revise la consola.',
 
             confirmButtonText: 'Aceptar'
 
         });
 
     });
+
+});
+    document.addEventListener('DOMContentLoaded', function () {
+
+
+        // =====================================================
+        // BOTÓN REGISTRAR PAGO
+        // =====================================================
+
+        const btnRegistrarPago =
+            document.getElementById('btnRegistrarPago');
+
+
+        if (btnRegistrarPago) {
+
+            btnRegistrarPago.addEventListener('click', function () {
+
+
+                // Buscar cliente mediante el buscador
+
+                const searchInput =
+                    document.querySelector('.dataTable-input') ||
+                    document.querySelector(
+                        '#datatablesSimple_wrapper input[type="search"]'
+                    ) ||
+                    document.querySelector(
+                        'input[type="search"]'
+                    );
+
+
+                let nombreBuscado = '';
+
+
+                if (searchInput) {
+
+                    nombreBuscado =
+                        searchInput.value.trim().toLowerCase();
+
+                }
+
+
+                // =================================================
+                // VALIDAR CLIENTE
+                // =================================================
+
+                if (!nombreBuscado) {
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Seleccione un cliente',
+                        text: 'Primero busque un cliente.',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                    return;
+
+                }
+
+
+                // =================================================
+                // BUSCAR FILAS
+                // =================================================
+
+                const filas =
+                    Array.from(
+                        document.querySelectorAll(
+                            '#datatablesSimple tbody tr'
+                        )
+                    );
+
+
+                const filasCliente =
+                    filas.filter(function (fila) {
+
+                        const celdas =
+                            fila.querySelectorAll('td');
+
+
+                        if (celdas.length < 9) {
+                            return false;
+                        }
+
+
+                        const nombre =
+                            celdas[1]
+                                .innerText
+                                .trim()
+                                .toLowerCase();
+
+
+                        return nombre.includes(nombreBuscado);
+
+                    });
+
+
+                // =================================================
+                // CLIENTE NO ENCONTRADO
+                // =================================================
+
+                if (filasCliente.length === 0) {
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Cliente no encontrado',
+                        text: 'No se encontró el cliente.',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                    return;
+
+                }
+
+
+                // =================================================
+                // DATOS
+                // =================================================
+                         
+            const primeraFila = filasCliente[0];
+
+                const celdas =
+                    primeraFila.querySelectorAll('td');
+
+
+                // =====================================================
+                // OBTENER DATOS DEL CLIENTE DESDE EL BOTÓN
+                // DataTables puede modificar el <tr>, pero mantiene
+                // los atributos del botón.
+                // =====================================================
+
+                let botonPago = null;
+
+                // Buscar un botón Pagar dentro de las filas del cliente
+                for (const fila of filasCliente) {
+
+                    const boton = fila.querySelector('.btn-pagar');
+
+                    if (boton) {
+                        botonPago = boton;
+                        break;
+                    }
+                }
+
+
+                // =====================================================
+                // VALIDAR BOTÓN
+                // =====================================================
+
+                if (!botonPago) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No se encontró el botón de pago',
+                        text: 'No se pudo obtener el ID del cliente.',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                    return;
+                }
+
+
+                // =====================================================
+                // OBTENER ID CLIENTE
+                // =====================================================
+
+                const idCliente =
+                    botonPago.getAttribute('data-id-cliente');
+
+
+                // =====================================================
+                // DEBUG
+                // =====================================================
+
+                console.log("=================================");
+                console.log("ID CLIENTE OBTENIDO:", idCliente);
+                console.log("BOTÓN:", botonPago);
+                console.log("DATASET BOTÓN:", botonPago.dataset);
+                console.log("=================================");
+
+
+                // =====================================================
+                // VALIDAR ID
+                // =====================================================
+
+                if (!idCliente || idCliente === 'null' || idCliente === 'undefined') {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ID de cliente no encontrado',
+                        text: 'El cliente no tiene un ID válido.',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                    return;
+                }
+
+
+                const nombreCliente =
+                    celdas[1].innerText.trim();
+
+
+                // =================================================
+                // CALCULAR TOTAL
+                // =================================================
+
+                let total = 0;
+
+
+                filasCliente.forEach(function (fila) {
+
+                    const celdas =
+                        fila.querySelectorAll('td');
+
+
+                    const precio =
+                        parseFloat(
+                            celdas[5]
+                                .innerText
+                                .replace('S/', '')
+                                .replace(',', '')
+                                .trim()
+                        ) || 0;
+
+
+                    total += precio;
+
+                });
+
+
+                // =====================================================
+                // TOTAL PAGADO DEL CLIENTE
+                // =====================================================
+
+                let totalPagado = 0;
+
+                filasCliente.forEach(function(fila) {
+
+                    const valor = parseFloat(
+                        fila.getAttribute('data-total-pagado') || '0'
+                    );
+
+                    if (!isNaN(valor) && valor > totalPagado) {
+                        totalPagado = valor;
+                    }
+
+                });
+
+                console.log("TOTAL PAGADO DEL CLIENTE:", totalPagado);
+
+                const saldo =
+                total - totalPagado;
+
+
+                // =================================================
+                // SI YA PAGÓ TODO
+                // =================================================
+
+                if (saldo <= 0) {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cuenta pagada',
+                        text:
+                            nombreCliente +
+                            ' ya no tiene saldo pendiente.',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                    return;
+
+                }
+
+
+                // =================================================
+                // LLENAR MODAL
+                // =================================================
+
+                document.getElementById(
+                    'id_cliente_pago'
+                ).value = idCliente;
+
+
+                document.getElementById(
+                    'nombre_cliente_pago'
+                ).value = nombreCliente;
+
+
+                document.getElementById(
+                    'monto_pago'
+                ).value = '';
+
+
+                document.getElementById(
+                    'monto_pago'
+                ).max = saldo.toFixed(2);
+
+
+                // Fecha actual
+
+                const hoy =
+                    new Date()
+                        .toISOString()
+                        .split('T')[0];
+
+
+                document.getElementById(
+                    'fecha_pago'
+                ).value = hoy;
+
+
+                document.getElementById(
+                    'informacionDeuda'
+                ).innerHTML = `
+
+                    <strong>Total:</strong>
+                    S/ ${total.toFixed(2)}
+
+                    <br>
+
+                    <strong>Pagado:</strong>
+                    S/ ${totalPagado.toFixed(2)}
+
+                    <br>
+
+                    <strong>Saldo pendiente:</strong>
+                    S/ ${saldo.toFixed(2)}
+
+                `;
+
+
+                // =================================================
+                // MOSTRAR MODAL
+                // =================================================
+
+                const modal =
+                    new bootstrap.Modal(
+                        document.getElementById(
+                            'modalRegistrarPago'
+                        )
+                    );
+
+
+                modal.show();
+
+            });
+
+        }
+
+
+    });
+    document.getElementById('formRegistrarPago')
+    .addEventListener('submit', function (e) {
+
+        e.preventDefault();
+
+
+        const formulario = this;
+
+
+        const datos =
+            new FormData(formulario);
+
+
+        const monto =
+            parseFloat(
+                document.getElementById('monto_pago').value
+            );
+
+
+        if (!monto || monto <= 0) {
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Monto inválido',
+                text: 'Ingrese un monto válido.',
+                confirmButtonText: 'Aceptar'
+            });
+
+            return;
+
+        }
+
+
+        fetch('pago_registrar.php', {
+
+            method: 'POST',
+
+            body: datos
+
+        })
+
+        .then(response => response.text())
+
+        .then(resultado => {
+
+        resultado = resultado.trim();
+
+        console.log("RESPUESTA PHP:", resultado);
+    
+
+        if (resultado === 'SI') {
+
+        Swal.fire({
+
+            icon: 'success',
+
+            title: '¡Pago registrado!',
+
+            text: 'El pago fue registrado correctamente.',
+
+            confirmButtonText: 'Aceptar'
+
+        }).then(() => {
+
+            location.reload();
+
+        });
+
+        } else {
+
+            Swal.fire({
+
+                icon: 'error',
+
+                title: 'Error al registrar pago',
+
+                html:
+                    '<b>El servidor respondió:</b><br><br>' +
+                    '<code>' + resultado + '</code>',
+
+                confirmButtonText: 'Aceptar'
+
+            });
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        Swal.fire({
+
+            icon: 'error',
+
+            title: 'Error',
+
+            text:
+                'Ocurrió un error al registrar el pago.',
+
+            confirmButtonText: 'Aceptar'
+
+        });
+
+    });
+
+});
+// =====================================================
+// BOTÓN PAGAR DE CADA FILA
+// =====================================================
+
+document.addEventListener('click', function (e) {
+
+    const boton = e.target.closest('.btn-pagar');
+
+    if (!boton) {
+        return;
+    }
+
+    console.log("=================================");
+    console.log("BOTÓN PAGAR PRESIONADO");
+    console.log("ID SALIDA:", boton.dataset.id);
+    console.log("ID CLIENTE:", boton.dataset.idCliente);
+    console.log("TOTAL PAGADO:", boton.dataset.totalPagado);
+    console.log("=================================");
+
+
+    const idSalida = boton.dataset.id;
+    const idCliente = boton.dataset.idCliente;
+    const totalPagado = parseFloat(
+        boton.dataset.totalPagado || 0
+    );
+
+
+    // =====================================================
+    // VALIDAR ID CLIENTE
+    // =====================================================
+
+    if (!idCliente || idCliente === '0') {
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Cliente inválido',
+            text: 'El registro no tiene un ID de cliente válido.',
+            confirmButtonText: 'Aceptar'
+        });
+
+        console.error(
+            "ID CLIENTE INVÁLIDO:",
+            idCliente
+        );
+
+        return;
+    }
+
+
+    // =====================================================
+    // OBTENER FILA
+    // =====================================================
+
+    const fila = boton.closest('tr');
+
+    const celdas = fila.querySelectorAll('td');
+
+
+    if (celdas.length < 9) {
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo obtener la información del registro.',
+            confirmButtonText: 'Aceptar'
+        });
+
+        return;
+    }
+
+
+    // =====================================================
+    // DATOS DEL REGISTRO
+    // =====================================================
+
+    const nombreCliente =
+        celdas[1].innerText.trim();
+
+
+    const precio =
+        parseFloat(
+            celdas[5].innerText
+                .replace('S/', '')
+                .replace(',', '')
+                .trim()
+        ) || 0;
+
+
+    // =====================================================
+    // SALDO
+    // =====================================================
+
+    const saldo = precio - totalPagado;
+
+
+    if (saldo <= 0) {
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Cuenta pagada',
+            text:
+                nombreCliente +
+                ' ya no tiene saldo pendiente.',
+            confirmButtonText: 'Aceptar'
+        });
+
+        return;
+    }
+
+
+    // =====================================================
+    // LLENAR MODAL
+    // =====================================================
+
+    document.getElementById(
+        'id_cliente_pago'
+    ).value = idCliente;
+
+
+    document.getElementById(
+        'nombre_cliente_pago'
+    ).value = nombreCliente;
+
+
+    document.getElementById(
+        'monto_pago'
+    ).value = '';
+
+
+    document.getElementById(
+        'monto_pago'
+    ).max = saldo.toFixed(2);
+
+
+    // =====================================================
+    // FECHA ACTUAL
+    // =====================================================
+
+    const hoy =
+        new Date()
+            .toISOString()
+            .split('T')[0];
+
+
+    document.getElementById(
+        'fecha_pago'
+    ).value = hoy;
+
+
+    // =====================================================
+    // INFORMACIÓN DEUDA
+    // =====================================================
+
+    document.getElementById(
+        'informacionDeuda'
+    ).innerHTML = `
+
+        <strong>Total:</strong>
+        S/ ${precio.toFixed(2)}
+
+        <br>
+
+        <strong>Pagado:</strong>
+        S/ ${totalPagado.toFixed(2)}
+
+        <br>
+
+        <strong>Saldo pendiente:</strong>
+        S/ ${saldo.toFixed(2)}
+
+    `;
+
+
+    // =====================================================
+    // MOSTRAR MODAL
+    // =====================================================
+
+    const modal =
+        new bootstrap.Modal(
+            document.getElementById(
+                'modalRegistrarPago'
+            )
+        );
+
+
+    modal.show();
 
 });
 </script>
