@@ -45,9 +45,11 @@
                         $id_cliente = $_REQUEST['id_cliente'];
                         $cantidad = $_REQUEST['cantidad'];
                         $producto = $_REQUEST['producto'];
-                        $precio = $_REQUEST['precio'];
+                        $precio_unitario = floatval($_REQUEST['precio_unitario']);
                         $fecha_registro = $_REQUEST['fecha_registro'];
 
+                        // Recalcular el total en el servidor
+                        $precio = round(floatval($cantidad) * $precio_unitario, 2);
                         // Registrar salida
                         $rpta = RegistrarSalida(
                             $id_cliente,
